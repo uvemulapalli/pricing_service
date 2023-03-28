@@ -1,0 +1,25 @@
+name: Prcing App Docker CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+
+  build:
+
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Log in to Docker Hub
+        env:
+          DOCKER_USERNAME: "sumit047"
+          DOCKER_PASSWORD: "dckr_pat_eSSXh03h6PnYhwqklNbbXkUV3Jg"
+        run: docker login -u sumit047 -p dckr_pat_eSSXh03h6PnYhwqklNbbXkUV3Jg
+
+      - name: Build Docker image
+        run: docker build -f Dockerfile -t sumit047/pricingapp:0.08 . --network=host
+      - name: Image push
+        run: docker push sumit047/pricingapp:0.08
