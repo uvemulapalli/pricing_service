@@ -170,8 +170,9 @@ def getPredictedPriceForInstrument():
             try:
                 redis_con = connectToRedis()
                 training_data = redis_con.get(instrumentId)
+                print(training_data)
                 model,trainingTime = initPriceModelforGivenInstrument(instrumentId,training_data)
-                print(f'training time = {trainingTime}')
+                print('training time = {trainingTime}')
                 populateModelCache(instrumentId,model)
             except Exception as e:
                 print('Exception occured while getting training data and initializing Model',str(e))
@@ -211,6 +212,7 @@ def getPredictedPriceForInstruments():
             spotPrice = item['spotprice']
 
             pricerModel = instrumentModelMap.get(instrumentId)
+            print(pricerModel)
             if not pricerModel:
                 print("No Model found for given instrument ", instrumentId)
                 enrichResponse(response, instrumentId, 0, 0, 0, {})
@@ -246,6 +248,12 @@ def getTrainingDataForGivenInstrument(instrument,training_data):
     xTrain = values_arr[:, :1].reshape([-1, 1])
     yTrain = values_arr[:, :2].reshape([-1, 1])
     dydxTrain = values_arr[:, :3].reshape([-1, 1])
+    # print("training data", training_data)
+    print(xTrain)
+    print(yTrain)
+    # print(dydxTrain)
+
+
     return xTrain, yTrain, dydxTrain
 
 def prepareAndTrainModel(xTrain, yTrain, dydxTrain):
