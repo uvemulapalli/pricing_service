@@ -1,0 +1,9 @@
+flask
+flask-cors
+redis
+pandas
+tensorflow
+scipy
+matplotlib
+datetime
+numpy
