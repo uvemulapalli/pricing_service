@@ -15,11 +15,11 @@ jobs:
       - uses: actions/checkout@v3
       - name: Log in to Docker Hub
         env:
-          DOCKER_USERNAME: "sumit047"
-          DOCKER_PASSWORD: "dckr_pat_eSSXh03h6PnYhwqklNbbXkUV3Jg"
-        run: docker login -u sumit047 -p dckr_pat_eSSXh03h6PnYhwqklNbbXkUV3Jg
+          DOCKER_USERNAME: "tanulsangal"
+          DOCKER_PASSWORD: "abcd@1234"
+        run: docker login -u tanulsangal -p abcd@1234
 
       - name: Build Docker image
-        run: docker build -f Dockerfile -t sumit047/pricingapp:0.08 . --network=host
+        run: docker build -f Dockerfile -t tanulsangal/pricingapp:latest . --network=host
       - name: Image push
-        run: docker push sumit047/pricingapp:0.08
+        run: docker push tanulsangal/pricingapp:latest
