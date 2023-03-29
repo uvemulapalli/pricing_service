@@ -486,7 +486,7 @@ def getRawResponse():
     return {"data":[]}
 
 def getRequestParam(request_data):
-    instrumentId = request_data['ticker']
+    instrumentId = request_data['instrumentId']
     strikePrice = float(request_data['strikeprice'])
     expiryInYears = float(request_data['expiry'])
     spotPrice = float(request_data['spotprice'])
