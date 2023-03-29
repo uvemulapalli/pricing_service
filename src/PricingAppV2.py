@@ -166,7 +166,7 @@ def getPredictedPriceForInstrument():
         pricerModel = instrumentModelMap.get(instrumentId)
 
         if not pricerModel:
-            print("No model found for given Instrument in Model Cache, Iniiating the model inititilization ")
+            print("No model found for given Instrument in Model Cache, Iniiating the model inititilization.")
             try:
                 redis_con = connectToRedis()
                 training_data = redis_con.get(instrumentId)
