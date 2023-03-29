@@ -173,7 +173,7 @@ def getPredictedPriceForInstrument():
                 if not training_data:
                     raise Exception('No Training Data found in Redis for given instrument')
                 print(training_data)
-                model,trainingTime = initPriceModelforGivenInstrument(instrumentId,training_data)
+                model,trainingTime = initPriceModelforGivenInstrument(instrumentId,json.loads(training_data))
                 print('training time = {trainingTime}')
                 populateModelCache(instrumentId,model)
             except Exception as e:
@@ -345,7 +345,7 @@ def initPriceModelforGivenInstrument(instrument,training_data):
 
 
 def getTrainingDataForGivenInstrument(instrument,training_data):
-    df = pd.DataFrame(json.loads(training_data))
+    df = pd.DataFrame(training_data)
     values_arr = np.array(df.values)
     xTrain = values_arr[:, :1].reshape([-1, 1])
     yTrain = values_arr[:, :2].reshape([-1, 1])
