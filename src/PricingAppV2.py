@@ -199,6 +199,103 @@ def getPredictedPriceForInstrument():
 
         return jsonify(response)
 
+    
+    
+
+@app.route('/model/price/instrument1', methods=['POST'])
+def getPredictedPriceForInstrument1():
+    if (request.method == 'POST'):
+        request_data = request.get_json()
+        instrumentId, strikePrice, expiryInYears, spotPrice, volatality = getRequestParam(request_data)
+
+        # simulation set sizes to perform
+        sizes = [8192]
+        simulSeed = np.random.randint(0, 10000)
+        print("using seed %d" % simulSeed)
+        weightSeed = None
+
+        # number of test scenarios
+        nTest = 100
+
+        generator = BlackScholes()
+        generator.__init__(spot=spotPrice, K=strikePrice, vol=volatality, T2=expiryInYears)
+
+        xAxis, yTest, dydxTest, vegas, values, deltas = test(generator, sizes, nTest, simulSeed, None, weightSeed,
+                                                                 instrumentId=instrumentId)
+
+        bsspot = np.array(xAxis).reshape([-1,1])
+        bsValue = np.array(yTest).reshape([-1, 1])
+        modelPredictions = np.array(values[('differential', 8192)]).reshape([-1, 1])
+
+
+        price_data = np.concatenate((bsspot, bsValue, modelPredictions), axis=1)
+        df = pd.DataFrame(price_data, columns=['spot', 'bsprice', 'modelprice'])
+        price_data_dict = df.to_dict(orient="records")
+        #
+        print(price_data_dict)
+
+        return jsonify(price_data_dict)
+    
+    
+
+def test(generator,
+         sizes,
+         nTest,
+         simulSeed=None,
+         testSeed=None,
+         weightSeed=None,
+         deltidx=0,
+         instrumentId=None):
+    # simulation
+    print("simulating training, valid and test sets")
+    xTrain, yTrain, dydxTrain = generator.trainingSet(max(sizes), seed=simulSeed)
+
+    comb_arr = np.concatenate((xTrain,yTrain,dydxTrain), axis = 1)
+
+    xTest, xAxis, yTest, dydxTest, vegas = generator.testSet(num=nTest, seed=testSeed,spotvariation=0.65)
+    print("done")
+
+    # neural approximator
+    print("initializing neural appropximator")
+    regressor = Neural_Approximator(xTrain, yTrain, dydxTrain)
+    print("done")
+
+    predvalues = {}
+    preddeltas = {}
+    for size in sizes:
+        print("\nsize %d" % size)
+        print('Model prep start time = ', datetime.utcnow().isoformat(sep=' ', timespec='milliseconds'))
+        regressor.prepare(size, False, weight_seed=weightSeed)
+        print('model prep end time = ', datetime.utcnow().isoformat(sep=' ', timespec='milliseconds'))
+
+        t0 = time.time()
+        print('*** Started Training time = ', datetime.utcnow().isoformat(sep=' ', timespec='milliseconds'))
+        regressor.train("standard training")
+
+        print('*** Training Finished , time = ', datetime.utcnow().isoformat(sep=' ', timespec='milliseconds'))
+
+        instrumentModelMap.__setitem__(instrumentId,regressor)
+
+        predictions, deltas = regressor.predict_values_and_derivs(xTest)
+        predvalues[("standard", size)] = predictions
+        preddeltas[("standard", size)] = deltas[:, deltidx]
+        t1 = time.time()
+
+        regressor.prepare(size, True, weight_seed=weightSeed)
+
+        t0 = time.time()
+        regressor.train("differential training")
+        predictions, deltas = regressor.predict_values_and_derivs(xTest)
+        predvalues[("differential", size)] = predictions
+        preddeltas[("differential", size)] = deltas[:, deltidx]
+        t1 = time.time()
+
+        print('differential predictions')
+        print(predictions)
+
+    return xAxis, yTest, dydxTest[:, deltidx], vegas, predvalues, preddeltas
+    
+    
 
 @app.route('/model/price/instruments', methods=['POST'])
 @cross_origin()
