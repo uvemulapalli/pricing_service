@@ -337,6 +337,7 @@ def getPredictedPriceForInstruments():
 
 
 def initPriceModelforGivenInstrument(instrument,training_data):
+
     print('Initializing price Model')
     xTrain, yTrain, dydxTrain = getTrainingDataForGivenInstrument(instrument,training_data)
     model , trainingTime = prepareAndTrainModel(xTrain, yTrain, dydxTrain)
@@ -344,7 +345,7 @@ def initPriceModelforGivenInstrument(instrument,training_data):
 
 
 def getTrainingDataForGivenInstrument(instrument,training_data):
-    df = pd.DataFrame(training_data)
+    df = pd.DataFrame(json.loads(training_data))
     values_arr = np.array(df.values)
     xTrain = values_arr[:, :1].reshape([-1, 1])
     yTrain = values_arr[:, :2].reshape([-1, 1])
