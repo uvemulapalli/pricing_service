@@ -170,6 +170,8 @@ def getPredictedPriceForInstrument():
             try:
                 redis_con = connectToRedis()
                 training_data = redis_con.get(instrumentId)
+                if not training_data:
+                    raise Exception('No Training Data found in Redis for given instrument')
                 print(training_data)
                 model,trainingTime = initPriceModelforGivenInstrument(instrumentId,training_data)
                 print('training time = {trainingTime}')
