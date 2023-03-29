@@ -354,7 +354,9 @@ def generateTrainingDataAndTrainModel(instrumentId,seed,spotPrice,strikePrice,vo
     print("initializing neural appropximator")
     regressor = Neural_Approximator(xTrain, yTrain, dydxTrain)
     print('Model prep start time = ', datetime.utcnow().isoformat(sep=' ', timespec='milliseconds'))
-    regressor.prepare(size, True, weight_seed=simulSeed)
+    #regressor.prepare(size, True, weight_seed=simulSeed)
+    #Seed only required for training set for model its None
+    regressor.prepare(size, True, weight_seed=None)
     print('Model prep end time = ', datetime.utcnow().isoformat(sep=' ', timespec='milliseconds'))
 
     t0 = time.time()
