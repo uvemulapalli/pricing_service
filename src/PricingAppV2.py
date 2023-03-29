@@ -179,7 +179,7 @@ def getPredictedPriceForInstrument():
             except Exception as e:
                 print('Exception occured while getting training data and initializing Model',str(e))
                 error_message = 'Could not determine price'+' cause : '+str(e)
-                return Response(error_message,400)
+                return Response(error_message,500)
 
 
         pricerModel = instrumentModelMap.get(instrumentId)
