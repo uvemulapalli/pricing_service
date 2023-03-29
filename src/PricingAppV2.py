@@ -203,8 +203,10 @@ def getPredictedPriceForInstrument():
     
 
 @app.route('/model/price/instrument1', methods=['POST'])
+@cross_origin()
 def getPredictedPriceForInstrument1():
     if (request.method == 'POST'):
+        print('Hitting the Instrument 1 API ')
         request_data = request.get_json()
         instrumentId, strikePrice, expiryInYears, spotPrice, volatality = getRequestParam(request_data)
 
