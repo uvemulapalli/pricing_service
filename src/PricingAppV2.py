@@ -260,12 +260,23 @@ def prepareAndTrainModel(xTrain, yTrain, dydxTrain):
     # neural approximator
     print("initializing neural appropximator")
     regressor = Neural_Approximator(xTrain, yTrain, dydxTrain)
-    print('Model prep start time = ', datetime.utcnow().isoformat(sep=' ', timespec='milliseconds'))
-    #regressor.prepare(size, True, weight_seed=seed)
-    regressor.prepare(size, True, weight_seed=None)
-    print('Model prep end time = ', datetime.utcnow().isoformat(sep=' ', timespec='milliseconds'))
+    
+    print('Standard Model prep start time = ', datetime.utcnow().isoformat(sep=' ', timespec='milliseconds'))
+    regressor.prepare(size, False, None)
+    print('Standard Model prep end time = ', datetime.utcnow().isoformat(sep=' ', timespec='milliseconds'))
 
     t0 = time.time()
+    print('Standard Model Training start time = ', datetime.utcnow().isoformat(sep=' ', timespec='milliseconds'))
+    regressor.train("standard training")
+    print('Standard Model Training end time = ', datetime.utcnow().isoformat(sep=' ', timespec='milliseconds'))
+
+
+
+    print('Model prep start time = ', datetime.utcnow().isoformat(sep=' ', timespec='milliseconds'))
+    regressor.prepare(size, True, None)
+    print('Model prep end time = ', datetime.utcnow().isoformat(sep=' ', timespec='milliseconds'))
+
+    
     print('Model Training start time = ', datetime.utcnow().isoformat(sep=' ', timespec='milliseconds'))
     regressor.train("differential training")
     print('Model Training end time = ', datetime.utcnow().isoformat(sep=' ', timespec='milliseconds'))
