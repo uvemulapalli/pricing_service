@@ -20,6 +20,6 @@ jobs:
         run: docker login -u tanulsangal -p abcd@1234
 
       - name: Build Docker image
-        run: docker build -f Dockerfile -t tanulsangal/pricingapp:latest . --network=host
+        run: docker build -f Dockerfile -t tanulsangal/pricingapp:0.09 . --network=host
       - name: Image push
-        run: docker push tanulsangal/pricingapp:latest
+        run: docker push tanulsangal/pricingapp:0.09
