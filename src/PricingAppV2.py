@@ -261,7 +261,8 @@ def prepareAndTrainModel(xTrain, yTrain, dydxTrain):
     print("initializing neural appropximator")
     regressor = Neural_Approximator(xTrain, yTrain, dydxTrain)
     print('Model prep start time = ', datetime.utcnow().isoformat(sep=' ', timespec='milliseconds'))
-    regressor.prepare(size, True, weight_seed=seed)
+    #regressor.prepare(size, True, weight_seed=seed)
+    regressor.prepare(size, True, weight_seed=None)
     print('Model prep end time = ', datetime.utcnow().isoformat(sep=' ', timespec='milliseconds'))
 
     t0 = time.time()
